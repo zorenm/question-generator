@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rad Random Question Generator</title>
+</head>
+<body>
+    <h1>🤘 Rad Random Question Generator 🤘</h1>
+
+    <div id="app">
+        <form id="list-form">
+            <label for="list-name">List Name, dude:</label>
+            <input type="text" id="list-name" required>
+            <button type="submit">Create List</button>
+        </form>
+        
+        <div id="lists-container"></div>
+        
+        <div id="question-container">
+            <form id="question-form">
+                <label for="question-input">Add a cool question:</label>
+                <input type="text" id="question-input" required>
+                <button type="submit">Add Question</button>
+            </form>
+            <button id="randomize-button">Randomize!</button>
+            <div id="random-question"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
