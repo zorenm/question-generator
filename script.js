@@ -1,75 +1,142 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const newListInput = document.getElementById('new-list-name');
-  const createListButton = document.getElementById('create-list');
-  const listsContainer = document.getElementById('lists-container');
-  const listTemplate = document.getElementById('list-template').content;
-  const questionTemplate = document.getElementById('question-template').content;
+const listSelect = document.getElementById('listSelect');
+const newListName = document.getElementById('newListName');
+const createList = document.getElementById('createList');
+const listTitle = document.getElementById('listTitle');
+const questionsList = document.getElementById('questionsList');
+const newQuestion = document.getElementById('newQuestion');
+const addQuestion = document.getElementById('addQuestion');
+const randomize = document.getElementById('randomize');
+const randomQuestion = document.getElementById('randomQuestion');
+const randomQuestionText = document.getElementById('randomQuestionText');
+const listDetails = document.getElementById('listDetails');
+const editList = document.getElementById('editList');
+const deleteList = document.getElementById('deleteList');
 
-  createListButton.addEventListener('click', () => {
-      const listName = newListInput.value.trim();
+let lists = JSON.parse(localStorage.getItem('lists')) || {};
 
-      if (listName) {
-          const list = listTemplate.cloneNode(true);
-          list.querySelector('.list-name').textContent = listName;
-          bindListEvents(list);
+function saveLists() {
+    localStorage.setItem('lists', JSON.stringify(lists));
+}
 
-          listsContainer.appendChild(list);
-          newListInput.value = '';
-      }
-  });
+function loadLists() {
+    listSelect.innerHTML = '<option value="">Select a list</option>';
 
-  function bindListEvents(list) {
-      const addQuestionButton = list.querySelector('.add-question');
-      const newQuestionInput = list.querySelector('.new-question');
-      const randomizeButton = list.querySelector('.randomize');
-      const deleteListButton = list.querySelector('.delete-list');
+    for (const listName in lists) {
+        const option = document.createElement('option');
+        option.textContent = listName;
+        option.value = listName;
+        listSelect.add(option);
+    }
+}
 
-      addQuestionButton.addEventListener('click', () => {
-          const questionText = newQuestionInput.value.trim();
+loadLists();
 
-          if (questionText) {
-              const question = questionTemplate.cloneNode(true);
-              question.querySelector('.question-text').textContent = questionText;
-              bindQuestionEvents(question);
+createList.addEventListener('click', () => {
+    const listName = newListName.value.trim();
+    if (!listName) return;
 
-              list.querySelector('.questions-container').appendChild(question);
-              newQuestionInput.value = '';
-          }
-      });
+    lists[listName] = [];
+    newListName.value = '';
 
-      randomizeButton.addEventListener('click', () => {
-          const questions = Array.from(list.querySelectorAll('.question'));
-          if (questions.length > 0) {
-              const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-              alert(randomQuestion.querySelector('.question-text').textContent);
-          } else {
-              alert('There are no questions in the list.');
-          }
-      });
+    const option = document.createElement('option');
+    option.textContent = listName;
+    option.value = listName;
+    listSelect.add(option);
 
-      deleteListButton.addEventListener('click', () => {
-          listsContainer.removeChild(list);
-      });
-  }
+    saveLists();
+    loadLists();
+});
 
-  function bindQuestionEvents(question) {
-      const editButton = question.querySelector('.edit-question');
-      const deleteButton = question.querySelector('.delete-question');
+listSelect.addEventListener('change', () => {
+    const listName = listSelect.value;
+    if (!listName) {
+        listDetails.style.display = 'none';
+        return;
+    }
 
-      editButton.addEventListener('click', () => {
-          const questionText = question.querySelector('.question-text');
-          const newText = prompt('Edit your question:', questionText.textContent);
+    listDetails.style.display = 'block';
+    listTitle.textContent = listName;
+    displayQuestions(listName);
+});
 
-          if (newText !== null && newText.trim()) {
-              questionText.textContent = newText.trim();
-          }
-      });
+function displayQuestions(listName) {
+    questionsList.innerHTML = '';
 
-      deleteButton.addEventListener('click', () => {
-          question.classList.add('fade-out');
-          setTimeout(() => {
-              question.parentElement.removeChild(question);
-          }, 300);
-      });
-  }
+    lists[listName].forEach((question, index) => {
+        const li = document.createElement('li');
+        li.textContent = question;
+        li.style.marginBottom = '5px';
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => {
+            const editedQuestion = prompt('Edit the question:', question);
+            if (editedQuestion) {
+                lists[listName][index] = editedQuestion.trim();
+                displayQuestions(listName);
+                saveLists();
+            }
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => {
+            lists[listName].splice(index, 1);
+            displayQuestions(listName);
+            saveLists();
+        });
+
+        li.appendChild(editBtn);
+        li.appendChild(deleteBtn);
+        questionsList.appendChild(li);
+    });
+}
+
+addQuestion.addEventListener('click', () => {
+    const question = newQuestion.value.trim();
+    if (!question) return;
+
+    const listName = listSelect.value;
+    lists[listName].push(question);
+    newQuestion.value = '';
+
+    displayQuestions(listName);
+    saveLists();
+});
+
+randomize.addEventListener('click', () => {
+    const listName = listSelect.value;
+    const questions = lists[listName];
+    if (questions.length === 0) {
+        randomQuestion.style.display = 'none';
+        return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    randomQuestionText.textContent = questions[randomIndex];
+    randomQuestion.style.display = 'block';
+});
+
+editList.addEventListener('click', () => {
+    const listName = listSelect.value;
+    if (!listName) return;
+
+    const editedListName = prompt('Edit the list name:', listName);
+    if (editedListName && editedListName.trim() !== listName) {
+        lists[editedListName] = lists[listName];
+        delete lists[listName];
+        saveLists();
+        loadLists();
+    }
+});
+
+deleteList.addEventListener('click', () => {
+    const listName = listSelect.value;
+    if (!listName) return;
+
+    if (confirm(`Are you sure you want to delete the list "${listName}"?`)) {
+        delete lists[listName];
+        saveLists();
+        loadLists();
+    }
 });
