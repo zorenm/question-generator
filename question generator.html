@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question List Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore-compat.js"></script>
+<head>
+<body>
+    <h1>Question List Manager</h1>
+    <div id="app">
+        <div id="listCreation">
+            <input type="text" id="newListName" placeholder="Enter new list name">
+            <button id="createList">Create List</button>
+        </div>
+        <div id="listSelection">
+            <select id="listSelect">
+                <option value="">Select a list</option>
+            </select>
+            <button id="editList">Edit List</button> 
+            <button id="deleteList">Delete List</button>
+        </div>
+
+        <div id="listDetails" style="display: none;">
+            <h2 id="listTitle"></h2>
+            <ul id="questionsList"></ul>
+            <input type="text" id="newQuestion" placeholder="Enter a new question">
+            <button id="addQuestion">Add Question</button>
+            <button id="randomize">Randomize</button>
+            <div id="randomQuestion" style="display: none;">
+                <h3>Random Question:</h3>
+                <p id="randomQuestionText"></p>
+            </div>
+        </div>
+    </div>
+
+  <form id="sign-up-form">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button type="submit">Sign Up</button>
+</form>
+<form id="sign-in-form">
+  <input type="email" id="login-email" placeholder="Email">
+  <input type="password" id="login-password" placeholder="Password">
+  <button type="submit">Sign In</button>
+</form>
+<button id="sign-out">Sign Out</button>
+
+
+
+<script src="script.js"></script>
+
+
+</body>
+</html>
+
